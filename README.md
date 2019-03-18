@@ -29,5 +29,5 @@ To get the token for login
 kubectl get secret -n kube-system $(kubectl get serviceaccount kubernetes-dashboard -n kube-system -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode 
 ```
 Dashboard screenshot
-![Screenshot](k8sdashboard.jpg)
+![Screenshot](k8sdashboard.JPG)
 
