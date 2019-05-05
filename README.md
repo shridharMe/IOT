@@ -5,7 +5,7 @@ Vagrant up
 #### Configure k3 master
 ```bash
 Vagrant ssh k3-master
-service k3s restart
+sudo service k3s restart
 ```
 #### Configure nodes
 Login to each node 

@@ -1,25 +1,54 @@
 $common_script = <<-SCRIPT
   #! /bin/sh
   echo "###############Running Common Script ################################"
+    #ln -s /usr/share/zoneinfo/Europe/London  /etc/localtime
      apt-get update
      apt-get install curl -y
      apt-get install vim -y
+     apt-get install lsof -y
      apt-get install iputils-ping -y
-      curl -sfL https://get.k3s.io | sh -
-     chmod +x /usr/local/bin/k3s  
-     service k3s stop
-     sleep 60
-  echo "###############End of common Script ################################"
+     curl -sfL https://get.k3s.io | sh -
+     chmod +x /usr/local/bin/k3s 
+     systemctl stop k3s
+     rm - /var/lib/rancher/k3s/server/manifests/traefik.yaml         
  SCRIPT
 
 $ks3_master_script = <<-SCRIPT
   #! /bin/sh  
-  echo "###############Running k3 master Script ################################"
-   k3s server &
-  echo "######## Adding dashboard #####"
-   k3s  kubectl create -f /vagrant/kubernetes-dashboard.yaml  
-   k3s kubectl create clusterrolebinding dashboard-admin -n kube-system --clusterrole=cluster-admin --serviceaccount=kube-system:kubernetes-dashboard
-  echo "###############End of k3 master Script ################################"
+    systemctl start k3s
+    kubectl label nodes k3-master dedicated=master    
+    kubectl create 
+kind: Service
+metadata:
+  name: nginx-ingress
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30000
+      name: http
+    - port: 18080
+      nodePort: 32000
+      name: http-mgmt
+  selector:
+    app: nginx-ingress-lbapiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30000
+      name: http
+    - port: 18080
+      nodePort: 32000
+      name: http-mgmt
+  selector:
+    app: nginx-ingress-lbps://raw.githubusercontent.com/shridharMe/IOT/master/kubernetes-dashboard.yaml  
+    k3s kubectl create clusterrolebinding dashboard-admin -n kube-system --clusterrole=cluster-admin --serviceaccount=kube-system:kubernetes-dashboard
+    k3s kubectl delete -f /var/lib/rancher/k3s/server/manifests/traefik.yaml
+    #k3s  kubectl create -f /vagrant/kube/traefik/
   SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -35,35 +64,8 @@ Vagrant.configure("2") do |config|
       vb.memory = 1024       
       #vb.cpus = 2
     end    
-    master.vm.network "public_network" #, ip: "192.168.0.17"
+    master.vm.network "public_network" , ip: "192.168.1.62"
     master.vm.provision "shell",inline: $common_script  
     master.vm.provision "shell",inline: $ks3_master_script
   end
-
-  ####Configuring Node 1 ##################################################
-  config.vm.define "iot-node1" do |node1|
-    node1.vm.box = "envimation/ubuntu-xenial"
-    node1.vm.hostname = "iot-node1"
-    node1.vm.network "public_network", ip: "192.168.0.18"
-    node1.vm.provider :virtualbox do |vb|
-      vb.name = "iot-node1"
-      vb.memory = 500
-      #vb.cpus = 2
-    end
-    node1.vm.provision "shell", inline: $common_script
-  end
-
-  ####Configuring Node 2 ##################################################
-  config.vm.define "iot-node2" do |node2|
-    node2.vm.box = "envimation/ubuntu-xenial"
-    node2.vm.hostname = "iot-node2"
-    node2.vm.network "public_network", ip: "192.168.0.19"
-    node2.vm.provider :virtualbox do |vb|
-      vb.name = "iot-node2"
-      vb.memory = 500
-    end
-    node2.vm.provision "shell", inline: $common_script
-
-  end
-
 end
