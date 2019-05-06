@@ -1,9 +1,0 @@
-apiVersion: k3s.cattle.io/v1
-kind: HelmChart
-metadata:
-  name: kube-ops-view
-  namespace: kube-system
-spec:
-  chart: stable/kube-ops-view
-  set:
-    redis.enabled=true
