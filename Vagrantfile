@@ -42,11 +42,7 @@ $ks3_master_script = <<-SCRIPT
     kubectl -n kube-system get service kubernetes-dashboard
     echo $(kubectl get secret -n kube-system $(kubectl get serviceaccount kubernetes-dashboard -n kube-system -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode)
     git clone https://github.com/shridharMe/content-kubernetes-prometheus-env.git /vagrant
-    
-    kubectl apply -f /vagrant/content-kubernetes-prometheus-env/grafana
-    kubectl apply -f /vagrant/content-kubernetes-prometheus-env/prometheus
-
-  SCRIPT
+   SCRIPT
 
 Vagrant.configure("2") do |config| 
   config.vm.network :forwarded_port, guest:30000, host: 30000  
