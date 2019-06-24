@@ -5,6 +5,12 @@ Vagrant up
 #### Configure k3 master
 ```bash
 Vagrant ssh k3-master
+nestat -tnlp  
+#to check the master is up and running
+```
+![Screenshot](masterstatus.JPG)
+```bash
+#if you don't see all ports including 6443 is running than rub below command
 sudo service k3s restart
 ```
 #### Configure nodes
@@ -14,7 +20,7 @@ Vagrant ssh iot-node1 / iot-node2.
 ```
 Run command on each nodes 
 ```bash
-k3s agent --server https://[k3-master-ip]:6443 --token ${NODE_TOKEN}
+k3s agent --server https://[k3-master-ip]:6443 --token ${NODE_TOKEN} &
 ```
 Where NODE_TOKEN comes from /var/lib/rancher/k3s/server/node-token from k3-master
 
