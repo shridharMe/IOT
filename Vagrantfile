@@ -4,7 +4,7 @@ $common_script = <<-SCRIPT
     #ln -s /usr/share/zoneinfo/Europe/London  /etc/localtime
 
     apt-get update
-    apt-get install git curl vim lsof iputils-ping -y
+    apt-get install git curl vim lsof iputils-ping net-tools -y
     curl -sfL https://get.k3s.io | sh -
     chmod +x /usr/local/bin/k3s 
     systemctl stop k3s  
@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
       vb.memory = 1024       
       vb.cpus = 2
     end    
-    master.vm.network "public_network", ip: "192.168.1.62"
+    master.vm.network "public_network"#, ip: "192.168.1.62"
     master.vm.provision "shell",inline: $common_script  
     master.vm.provision "shell",inline: $ks3_master_script
   end
@@ -67,7 +67,7 @@ Vagrant.configure("2") do |config|
       vb.memory = 512       
       vb.cpus = 2
     end    
-    node.vm.network "public_network", ip: "192.168.1.72"
+    node.vm.network "public_network"#, ip: "192.168.1.72"
     node.vm.provision "shell",inline: $common_script  
   end
 
@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
       vb.memory = 512       
       vb.cpus = 2
     end    
-    node.vm.network "public_network" , ip: "192.168.1.82"
+    node.vm.network "public_network" #, ip: "192.168.1.82"
     node.vm.provision "shell",inline: $common_script  
   end
 end
