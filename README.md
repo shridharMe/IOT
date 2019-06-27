@@ -9,7 +9,7 @@ nestat -tnlp  #to check the master is up and running
 ```
 ![Screenshot](masterstatus.JPG)
 ```bash
-#if you don't see all ports including 6443 is running than run below command
+#if you don't see all ports including 6443 is running then run below command
 sudo service k3s restart
 ```
 #### Configure nodes
